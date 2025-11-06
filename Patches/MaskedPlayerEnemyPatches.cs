@@ -50,6 +50,8 @@ internal class MaskedPlayerEnemyPatches
             return;
         }
         HauntedMaskItem maskItem = maskItemInfo.mask;
+        if (maskItem.hasBeenHeld)
+            return;
 
         __instance.maskTypes[__instance.maskTypeIndex].SetActive(enable);
         maskItem.EnableItemMeshes(!enable);
