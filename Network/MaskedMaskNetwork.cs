@@ -86,7 +86,7 @@ internal class MaskedMaskNetwork : NetworkBehaviour
         mask.SetScrapValue(maskValue);
         mask.isHeldByEnemy = true;
         mask.grabbableToEnemies = false;
-        mask.grabbable = false;
+        mask.grabbable = true;
 
         Patches.HauntedMaskItemInfo maskInfo = new()
         {

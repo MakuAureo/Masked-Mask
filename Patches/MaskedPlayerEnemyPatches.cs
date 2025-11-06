@@ -24,7 +24,22 @@ internal class MaskedPlayerEnemyPatches
             Network.MaskedMaskNetwork.Instance.GrabMaskEveryoneRpc(maskedNetObj, maskNetObj, MaskedMask.Instance.ConfigOptions.convertedMaskValue.Value);
         }
     }
-    
+
+    [HarmonyPatch(nameof(MaskedPlayerEnemy.Update))]
+    [HarmonyPrefix]
+    private static void PreUpdate(MaskedPlayerEnemy __instance)
+    {
+        if (MaskedPlayerEnemyHelper.masks.TryGetValue(__instance, out HauntedMaskItemInfo maskItemInfo))
+            if (maskItemInfo.mask.hasBeenHeld && !__instance.isEnemyDead)
+            {
+                __instance.staminaTimer = 15f;
+                __instance.creatureAnimator.SetBool("Running", value: true);
+                __instance.running = true;
+            }
+        else
+            MaskedMask.Logger.LogError("Could not find mask to check grab status");
+    }
+
     [HarmonyPatch(nameof(MaskedPlayerEnemy.SetMaskGlow))]
     [HarmonyPostfix]
     private static void PostSetMaskGlow(MaskedPlayerEnemy __instance, bool enable)
