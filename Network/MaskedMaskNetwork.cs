@@ -83,10 +83,11 @@ internal class MaskedMaskNetwork : NetworkBehaviour
         masked.maskTypes[1].SetActive(value: false);
 
         mask.transform.localScale = new Vector3(0.13f, 0.13f, 0.13f);
+        mask.parentObject = masked.maskTypes[0].transform.GetChild(2).transform;
         mask.SetScrapValue(maskValue);
         mask.isHeldByEnemy = true;
-        mask.grabbableToEnemies = false;
         mask.grabbable = true;
+        mask.grabbableToEnemies = false;
 
         Patches.HauntedMaskItemInfo maskInfo = new()
         {

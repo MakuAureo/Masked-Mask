@@ -2,13 +2,23 @@ using System.Collections.Generic;
 using System.Reflection.Emit;
 using HarmonyLib;
 using Unity.Netcode;
-using UnityEngine;
 
 namespace MaskedMask.Patches;
 
 [HarmonyPatch(typeof(HauntedMaskItem))]
 internal class HauntedMaskItemPatches
 {
+    [HarmonyPatch(nameof(HauntedMaskItem.LateUpdate))]
+    [HarmonyPostfix]
+    private static void PostLateUpdate(HauntedMaskItem __instance)
+    {
+        if (__instance.parentObject != null && __instance.parentObject.parent.name == "HeadMaskComedy")
+        {
+            __instance.transform.rotation = __instance.parentObject.rotation;
+            __instance.transform.position = __instance.parentObject.position;
+        }
+    }
+
     [HarmonyPatch(nameof(HauntedMaskItem.CreateMimicServerRpc))]
     [HarmonyTranspiler]
     private static IEnumerable<CodeInstruction> TranspileCreateMimicServerRpc(IEnumerable<CodeInstruction> codes)
@@ -45,11 +55,6 @@ internal static class HauntedMaskItemHelper
             return;
         }
 
-        GameObject maskPrefab = (maskedInstance.maskTypeIndex == MaskedPlayerEnemyHelper.comedyMaskIndex) ? (MaskedPlayerEnemyHelper.comedyPrefab) : (MaskedPlayerEnemyHelper.tragedyPrefab);
-        GameObject maskObj = Object.Instantiate(maskPrefab, maskedInstance.transform.position, Quaternion.identity, RoundManager.Instance.spawnedScrapContainer);
-        NetworkObject maskNetObj = maskObj.GetComponent<NetworkObject>();
-        maskNetObj.Spawn();
-
-        Network.MaskedMaskNetwork.Instance.GrabMaskEveryoneRpc(maskedRef, maskNetObj, maskInstance.scrapValue);
+        MaskedPlayerEnemyHelper.SpawnMaskScrap(maskedInstance, (MaskedPlayerEnemyHelper.MaskIndex)maskedInstance.maskTypeIndex, maskInstance.scrapValue);
     }
 }

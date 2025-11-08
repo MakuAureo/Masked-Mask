@@ -9,7 +9,6 @@ internal class StartOfRoundPatches
     [HarmonyPostfix]
     private static void PostStart(StartOfRound __instance)
     {
-        MaskedMask.Logger.LogInfo("A");
         Network.MaskedMaskNetwork.SpawnNetworkHandler();
         MaskedPlayerEnemyHelper.PopulateMaskedPlayerEnemyHelperInfo();
     }
